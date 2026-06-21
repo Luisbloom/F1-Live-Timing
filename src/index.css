@@ -1,0 +1,108 @@
+@font-face {
+  font-family: 'Formula1';
+  src: url('/fonts/Formula1-Regular.ttf') format('truetype');
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'Formula1';
+  src: url('/fonts/Formula1-Bold.ttf') format('truetype');
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: 'Formula1Black';
+  src: url('/fonts/Formula1-Display-Black.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'F1Numbers';
+  src: url('/fonts/NumbersRegular.otf') format('opentype');
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'F1Numbers';
+  src: url('/fonts/NumbersBold.otf') format('opentype');
+  font-weight: 700;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #0e0e12;
+  --bg-panel: #16161e;
+  --bg-row: rgba(255,255,255,0.03);
+  --bg-row-alt: rgba(255,255,255,0.055);
+  --border: rgba(255,255,255,0.08);
+  --text: #ffffff;
+  --text-dim: rgba(255,255,255,0.5);
+  --text-dimmer: rgba(255,255,255,0.3);
+  --purple: #b26ff5;
+  --purple-bg: rgba(178,111,245,0.15);
+  --green: #00d2be;
+  --green-bg: rgba(0,210,190,0.12);
+  --yellow: #ffd700;
+  --yellow-bg: rgba(255,215,0,0.12);
+  --red: #e8002d;
+  --font: 'Formula1', sans-serif;
+  --font-black: 'Formula1Black', sans-serif;
+  --font-num: 'F1Numbers', monospace;
+}
+
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+}
+
+html {
+  background: var(--bg);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+
+/* Animations */
+@keyframes flash-purple {
+  0%   { background: var(--purple-bg); }
+  100% { background: transparent; }
+}
+
+@keyframes flash-green {
+  0%   { background: var(--green-bg); }
+  100% { background: transparent; }
+}
+
+@keyframes flash-yellow {
+  0%   { background: var(--yellow-bg); }
+  100% { background: transparent; }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+@keyframes slide-in {
+  from { transform: translateY(-6px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
