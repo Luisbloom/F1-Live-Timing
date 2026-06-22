@@ -25,7 +25,7 @@ export default function TelemetryPanel({
   const driver       = driverTiming?.driver
 
   const teamColor = driver
-    ? (driver.team_colour ? `#${driver.team_colour}` : getTeamColor(driver.team_name))
+    ? (driver.team_colour ? `#${driver.team_colour}` : (getTeamColor(driver.team_name) ?? '#888'))
     : '#888'
 
   const acronym = driver?.name_acronym ?? String(driverNum)

@@ -43,7 +43,7 @@ export default function DriverDetailPanel({ driverNum, drivers, allLaps, onClose
   if (!driverTiming) return null
 
   const driver    = driverTiming.driver
-  const teamColor = driver.team_colour ? `#${driver.team_colour}` : getTeamColor(driver.team_name)
+  const teamColor = driver.team_colour ? `#${driver.team_colour}` : (getTeamColor(driver.team_name) ?? '#FFFFFF')
 
   // Find teammate (same team, different driver)
   const teammate = drivers.find(

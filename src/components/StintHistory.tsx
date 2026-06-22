@@ -21,16 +21,18 @@ export default function StintHistory({ history }: Props) {
 
   return (
     <div className="stint-history">
-      {history.map((stint) => {
+      {history.map((stint, idx) => {
         const cfg    = TIRE_COLORS[stint.compound] ?? TIRE_COLORS.HARD
         const letter = TIRE_LETTER[stint.compound] ?? '?'
+        // lap_end is the last completed lap in the stint; lap_start is the first.
+        // Number of laps driven = lap_end - lap_start (no +1 — pit lap is excluded).
         const laps   = stint.lapEnd != null
-          ? stint.lapEnd - stint.lapStart + 1
+          ? stint.lapEnd - stint.lapStart
           : null
 
         return (
           <div
-            key={`${stint.compound}-${stint.lapStart}`}
+            key={`stint-${idx}`}
             className={`stint-pill ${!stint.isNew ? 'stint-pill--used' : ''}`}
             style={{ background: cfg.bg, border: `1px solid ${cfg.border}`, color: cfg.color }}
             title={`${stint.compound} · ${laps != null ? laps + ' vueltas' : 'actual'} · edad inicio: ${stint.age}`}

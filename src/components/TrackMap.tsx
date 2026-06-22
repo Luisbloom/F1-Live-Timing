@@ -122,7 +122,7 @@ function splitSectors(
     const s2i = clipped.findIndex(p => new Date(p.date).getTime() >= tS2)
     const s3i = clipped.findIndex(p => new Date(p.date).getTime() >= tS3)
 
-    if (s2i > 0 && s3i > s2i) {
+    if (s2i > 0 && s3i > s2i && s3i < clipped.length - 1) {
       return [
         clipped.slice(0, s2i + 1),
         clipped.slice(s2i, s3i + 1),
@@ -311,15 +311,30 @@ export default function TrackMap({
               )
             })()}
 
-            {/* ─ DRS zone markers ─ */}
+            {/* ─ DRS zone markers — perpendicular gate lines ─ */}
             {pDrs.length > 0 && (() => {
-              const step = Math.max(1, Math.ceil(pDrs.length / 200))
+              const step = Math.max(1, Math.ceil(pDrs.length / 60))
               const subsampled = pDrs.filter((_, i) => i % step === 0)
               return (
                 <g>
-                  {subsampled.map((p, i) => (
-                    <circle key={i} cx={p.x} cy={p.y} r={3} fill="#00BFFF" opacity={0.85} />
-                  ))}
+                  {subsampled.map((p, i) => {
+                    // Find adjacent DRS point for tangent direction
+                    const next = subsampled[i + 1] ?? subsampled[i - 1]
+                    if (!next) return null
+                    const dx = next.x - p.x, dy = next.y - p.y
+                    const len = Math.sqrt(dx*dx + dy*dy) || 1
+                    // Perpendicular unit vector
+                    const px = -dy / len, py = dx / len
+                    const hl = 7  // half-length of gate line
+                    return (
+                      <line
+                        key={i}
+                        x1={(p.x + px * hl).toFixed(1)} y1={(p.y + py * hl).toFixed(1)}
+                        x2={(p.x - px * hl).toFixed(1)} y2={(p.y - py * hl).toFixed(1)}
+                        stroke="#00BFFF" strokeWidth={2} opacity={0.9}
+                      />
+                    )
+                  })}
                 </g>
               )
             })()}
@@ -329,7 +344,7 @@ export default function TrackMap({
               const pos    = carPositions[i]
               if (!pos) return null
               const timing = driverMap[pos.driverNumber]
-              const color  = timing ? getTeamColor(timing.driver.team_name) : '#888'
+              const color  = (timing ? getTeamColor(timing.driver.team_name) : null) ?? '#888'
               const numStr = String(pos.driverNumber)
               const fontSize = numStr.length >= 3 ? 7 : numStr.length === 2 ? 8 : 9
 

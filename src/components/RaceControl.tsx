@@ -60,7 +60,7 @@ export default function RaceControl({ messages }: Props) {
       <div className="race-control__list">
         {messages.map((msg) => {
           const flagCfg = getFlagCfg(msg.flag)
-          const key = `${msg.date}-${msg.category}-${msg.message.slice(0,20)}`
+          const key = `${msg.date}-${msg.lap_number ?? 0}-${msg.category}`
           return (
             <div
               key={key}

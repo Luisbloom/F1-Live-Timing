@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { TrendingUp, TrendingDown } from 'lucide-react'
 import type { DriverTiming, BestSectors } from '../hooks/useTimingData'
 import type { ColumnConfig } from './ColumnToggle'
@@ -7,6 +8,7 @@ import { formatLapTime } from '../utils/format'
 import MiniSectors from './MiniSectors'
 import StintHistory from './StintHistory'
 import type { Lap } from '../types/openf1'
+import { flagEmoji } from '../utils/countryFlags'
 
 interface Props {
   timing:              DriverTiming
@@ -42,29 +44,6 @@ function TyreIcon({ compound, isUsed }: { compound: string; isUsed: boolean }) {
       {COMPOUND_LETTER[compound] ?? '?'}
     </span>
   )
-}
-
-// ── Country code → flag emoji ─────────────────────────────────
-const CC3_TO_2: Record<string, string> = {
-  // Common F1 nationalities (ISO 3166-1 alpha-3 → alpha-2)
-  GBR:'GB', NLD:'NL', ESP:'ES', FIN:'FI', GER:'DE', DEU:'DE',
-  AUS:'AU', MEX:'MX', CAN:'CA', THA:'TH', JPN:'JP', CHN:'CN', FRA:'FR',
-  ITA:'IT', BRA:'BR', USA:'US', DNK:'DK', DEN:'DK', NOR:'NO', BEL:'BE',
-  CHE:'CH', NZL:'NZ', ARG:'AR', PER:'PE', IRL:'IE', AUT:'AT', POL:'PL',
-  ISR:'IL', UAE:'AE', HUN:'HU', SWE:'SE', POR:'PT', RSA:'ZA', IND:'IN',
-  // Monaco (Monegasque) — OpenF1 uses MCO
-  MCO:'MC', MON:'MC',
-  // China — OpenF1 sometimes uses ZHO for Zhou Guanyu (not a real ISO code)
-  ZHO:'CN',
-  // Other overrides
-  GUA:'GT', CUB:'CU',
-}
-
-function flagEmoji(code: string): string {
-  if (!code) return ''
-  const two = CC3_TO_2[code.toUpperCase()]
-  if (!two) return ''
-  return two.split('').map(c => String.fromCodePoint(0x1F1E0 + c.charCodeAt(0) - 65)).join('')
 }
 
 // ── Lap time / sector helpers ─────────────────────────────────
@@ -111,6 +90,29 @@ function fmtLeader(gap: number | null, position: number): { text: string; cls: s
   return fmtGapValue(gap)
 }
 
+// ── Headshot with initials fallback ───────────────────────────
+function HeadshotOrInitials({ src, acronym, color }: { src: string; acronym: string; color: string }) {
+  const [failed, setFailed] = useState(false)
+  if (failed) {
+    return (
+      <div
+        className="driver-headshot-sm driver-headshot-initials"
+        style={{ background: color + '33', color, border: `1px solid ${color}55` }}
+      >
+        {acronym.slice(0, 2)}
+      </div>
+    )
+  }
+  return (
+    <img
+      src={src}
+      alt={acronym}
+      className="driver-headshot-sm"
+      onError={() => setFailed(true)}
+    />
+  )
+}
+
 // ── Component ─────────────────────────────────────────────────
 export default function DriverRow({ timing, overallBest, overallBestSectors, isEven, columns, onSelect }: Props) {
   const {
@@ -123,7 +125,7 @@ export default function DriverRow({ timing, overallBest, overallBestSectors, isE
   // Prefer the team colour from OpenF1 API (always current season accurate)
   // over our hardcoded map which can be wrong (e.g. Alpine pink→blue in 2026)
   const apiColor  = driver.team_colour?.trim()
-  const teamColor = apiColor ? `#${apiColor}` : getTeamColor(driver.team_name)
+  const teamColor = apiColor ? `#${apiColor}` : (getTeamColor(driver.team_name) ?? '#FFFFFF')
   const teamLogo   = getTeamLogo(driver.team_name)
   const headshotUrl = getHeadshotUrl(driver.name_acronym, driver.headshot_url)
   const compound  = currentStint?.compound ?? null
@@ -181,17 +183,15 @@ export default function DriverRow({ timing, overallBest, overallBestSectors, isE
         {/* Driver info */}
         <div className="driver-info">
           <div className="driver-code-row">
-            {/* Headshot small circle (if available) */}
+            {/* Headshot small circle — falls back to initials on error */}
             {headshotUrl && (
-              <img
+              <HeadshotOrInitials
                 src={headshotUrl}
-                alt={driver.name_acronym}
-                className="driver-headshot-sm"
-                onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
+                acronym={driver.name_acronym}
+                color={teamColor}
               />
             )}
             <span className="driver-code">{driver.name_acronym}</span>
-            {isFastestLap && <span className="fl-badge">FL</span>}
             {columns.posChange && positionChange !== 0 && (
               <span className={`pos-delta ${positionChange > 0 ? 'pd-up' : 'pd-down'}`}>
                 {positionChange > 0 ? <TrendingUp size={7} strokeWidth={2.5} /> : <TrendingDown size={7} strokeWidth={2.5} />}
@@ -223,7 +223,7 @@ export default function DriverRow({ timing, overallBest, overallBestSectors, isE
 
       {/* ── Best lap ── */}
       {columns.bestLap && (
-        <div className={`col-cell col-laptime ${lapClass(bestLap?.lap_duration, bestLap?.lap_duration, overallBest?.lap_duration)}`}>
+        <div className={`col-cell col-laptime ${lapClass(bestLap?.lap_duration, null, overallBest?.lap_duration)}`}>
           {formatLapTime(bestLap?.lap_duration)}
         </div>
       )}

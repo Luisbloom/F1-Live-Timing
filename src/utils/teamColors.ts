@@ -50,19 +50,20 @@ const TEAM_COLORS: Record<string, string> = {
   'Cadillac':         '#C9A227',
 }
 
-export function getTeamColor(teamName: string): string {
-  if (!teamName) return '#FFFFFF'
+export function getTeamColor(teamName: string): string | null {
+  if (!teamName) return null
   if (TEAM_COLORS[teamName]) return TEAM_COLORS[teamName]
   const key = Object.keys(TEAM_COLORS).find(k =>
     teamName.toLowerCase().includes(k.toLowerCase()) ||
     k.toLowerCase().includes(teamName.toLowerCase())
   )
-  return key ? TEAM_COLORS[key] : '#FFFFFF'
+  return key ? TEAM_COLORS[key] : null
 }
 
-export function hexToRgba(hex: string, alpha: number): string {
+export function hexToRgba(hex: string, alpha: number, fallback = 'rgba(255,255,255,0)'): string {
   const r = parseInt(hex.slice(1, 3), 16)
   const g = parseInt(hex.slice(3, 5), 16)
   const b = parseInt(hex.slice(5, 7), 16)
+  if (isNaN(r) || isNaN(g) || isNaN(b)) return fallback
   return `rgba(${r},${g},${b},${alpha})`
 }

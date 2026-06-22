@@ -52,15 +52,12 @@ function distributeBars(
     return [MIN + Math.floor(avail/3), MIN + Math.floor(avail/3), MIN + avail - 2*Math.floor(avail/3)]
 
   const sum  = s1 + s2 + s3
-  const e1   = Math.round(avail * s1 / sum)
-  const e2   = Math.round(avail * s2 / sum)
-  const e3   = avail - e1 - e2   // remainder → S3 (ensures exact total)
+  // Use floor so e1+e2 <= avail, guaranteeing e3 >= 0
+  const e1   = Math.floor(avail * s1 / sum)
+  const e2   = Math.floor(avail * s2 / sum)
+  const e3   = avail - e1 - e2   // always >= 0 with floor
 
-  return [
-    MIN + Math.max(0, e1),
-    MIN + Math.max(0, e2),
-    MIN + Math.max(0, e3),
-  ]
+  return [MIN + e1, MIN + e2, MIN + e3]
 }
 
 interface Props {

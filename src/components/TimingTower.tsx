@@ -68,7 +68,7 @@ export default function TimingTower({
       </div>
 
       {drivers.length === 0 && (
-        <div className="tower-empty">Sin datos de pilotos</div>
+        <div className="tower-empty">No driver data available</div>
       )}
     </div>
   )
