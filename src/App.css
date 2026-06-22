@@ -47,6 +47,13 @@
   flex-shrink: 0;
 }
 
+.sh-logo {
+  height: 28px;
+  width: auto;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
 .sh-flag { font-size: 16px; line-height: 1; }
 
 .sh-race-name {

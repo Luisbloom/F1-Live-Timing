@@ -40,11 +40,11 @@ export default function SessionHeader({
 
   return (
     <header className="session-header">
-      {/* Left: flag + race name */}
+      {/* Left: logo + flag + race name */}
       <div className="sh-left">
+        <img src="/logo.png" alt="F1 Live Timing" className="sh-logo" />
         <span className="sh-flag">{circuitFlag((session as any)?.country_code)}</span>
         <span className="sh-race-name">{raceName}</span>
-        <span className="sh-race-icon">🏁</span>
         {sessionMode === 'results' && !isReplay && (
           <span className="sh-mode-badge sh-mode-results">CLASIFICACIÓN FINAL</span>
         )}
