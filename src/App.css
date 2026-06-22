@@ -31,7 +31,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 42px;
+  height: 52px;
   padding: 0 14px;
   background: #0a0c12;
   border-bottom: 1px solid var(--border);
@@ -48,7 +48,7 @@
 }
 
 .sh-logo {
-  height: 40px;
+  height: 48px;
   width: auto;
   object-fit: contain;
   flex-shrink: 0;
